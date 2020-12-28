@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Chapter3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_load_first_image">Load First Image</string>
+    <string name="action_load_second_image">Load Second Image</string>
+    <string name="action_switch_camera">Switch Camera</string>
+    <string name="action_gaussian_blur">Gaussian Blur</string>
+    <string name="action_default">Default View</string>
+    <string name="action_mean_blur">Mean Blur</string>
+    <string name="action_median_blur">Median Blur</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+</resources>

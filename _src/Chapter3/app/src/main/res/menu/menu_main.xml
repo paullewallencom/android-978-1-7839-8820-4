@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.packtpub.masteringopencvandroid.chapter3.MainActivity">
+    <item android:id="@+id/action_load_first_image"
+        android:title="@string/action_load_first_image"
+        android:orderInCategory="1"
+        android:showAsAction="never" />
+    <item android:id="@+id/action_load_second_image"
+        android:title="@string/action_load_second_image"
+        android:orderInCategory="2"
+        android:showAsAction="never" />
+</menu>

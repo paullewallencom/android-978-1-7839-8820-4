@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="C:\Users\Salil\AndroidStudioProjects\MyApplication2\app\build\intermediates\pre-dexed\debug\classes-5e13bec5ebb53a9e53a2d1e13a14ea2b452c8dd4.jar"
+        jar="C:\Users\Salil\AndroidStudioProjects\MyApplication2\app\build\intermediates\exploded-aar\MyApplication2.libraries\opencv\unspecified\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="c18d18a1d6f620680d6c92fd648b5c8df83bb5fd"/>
+
+</pre-dex-items>

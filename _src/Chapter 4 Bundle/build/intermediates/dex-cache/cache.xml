@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="C:\Users\Salil\AndroidStudioProjects\FaceDetection\app\build\intermediates\pre-dexed\debug\classes-1a139f53a7a6442f3fa6ede6f6e4ddde3de82ce5.jar"
+        jar="C:\Users\Salil\AndroidStudioProjects\FaceDetection\app\build\intermediates\exploded-aar\FaceDetection.libraries\opencv\unspecified\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="eadb6d8f83e2a4283001a72c09acc89d570d4382"/>
+
+</pre-dex-items>

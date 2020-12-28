@@ -1,0 +1,179 @@
+package com.packtpub.masteringopencvandroid.chapter6;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+public class StitchingActivity extends Activity {
+
+    private final int CLICK_PHOTO = 1;
+    private Uri fileUri;
+    private ImageView ivImage;
+    Mat src;
+    ArrayList<Mat> clickedImages;
+    private static final String FILE_LOCATION = Environment.getExternalStorageDirectory() + "/Downloads/PacktPub/Chapter6/";
+    static int ACTION_MODE = 0, MODE_NONE = 0;
+
+    private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                    System.loadLibrary("stitcher");
+                    clickedImages = new ArrayList<Mat>();
+                    //DO YOUR WORK/STUFF HERE
+                    break;
+                default:
+                    super.onManagerConnected(status);
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_stitching);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ivImage = (ImageView)findViewById(R.id.ivImage);
+        Button bClickImage, bDone;
+
+        bClickImage = (Button)findViewById(R.id.bClickImage);
+        bDone = (Button)findViewById(R.id.bDone);
+
+        bClickImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File imagesFolder = new File(FILE_LOCATION);
+                imagesFolder.mkdirs();
+                File image = new File(imagesFolder, "panorama_"+ clickedImages.size() + ".jpg");
+                Uri fileUri = Uri.fromFile(image);
+//                fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+
+                // start the image capture Intent
+                startActivityForResult(intent, CLICK_PHOTO);
+            }
+        });
+
+        bDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(clickedImages.size()==0){
+                    Toast.makeText(getApplicationContext(), "No images clicked", Toast.LENGTH_SHORT).show();
+                } else if(clickedImages.size()==1){
+                    Toast.makeText(getApplicationContext(), "Only one image clicked", Toast.LENGTH_SHORT).show();
+                    Bitmap image = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
+                    Utils.matToBitmap(src, image);
+                    ivImage.setImageBitmap(image);
+                } else {
+                    createPanorama();
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_pyramid, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+//        if (id == R.id.action_load_first_image) {
+//            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+//            photoPickerIntent.setType("image/*");
+//            startActivityForResult(photoPickerIntent, CLICK_PHOTO);
+//            return true;
+//        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch(requestCode) {
+            case CLICK_PHOTO:
+                if(resultCode == RESULT_OK){
+                    try {
+                        final Uri imageUri = imageReturnedIntent.getData();
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        src = new Mat(selectedImage.getHeight(), selectedImage.getWidth(), CvType.CV_8UC4);
+                        Utils.bitmapToMat(selectedImage, src);
+                        clickedImages.add(src);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void createPanorama(){
+
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                Mat srcRes = new Mat();
+
+                StitchPanorama(clickedImages.toArray(), clickedImages.size(), srcRes.getNativeObjAddr());
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                if(bitmap!=null) {
+                    ivImage.setImageBitmap(bitmap);
+                }
+            }
+        }.execute();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, this,
+                mOpenCVCallBack);
+    }
+
+    public native void StitchPanorama(Object images[], int size, long addrSrcRes);
+
+}

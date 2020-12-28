@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Chapter5</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_load_first_image">Load Image</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_pyramid">PyramidActivity</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+</resources>
